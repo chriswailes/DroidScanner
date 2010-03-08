@@ -1,0 +1,50 @@
+<?xml version="1.0" encoding="utf-8"?>
+<manifest xmlns:android="http://schemas.android.com/apk/res/android"
+      android:versionCode="1"
+      android:versionName="1.0" package="com.nuvsoft.android.scanner">
+    <application android:icon="@drawable/icon" android:label="@string/app_name" android:debuggable="true" android:name="ScannerApplication">
+        <activity android:label="@string/app_name" android:name="Scanner">
+            <intent-filter>
+                <action android:name="android.intent.action.MAIN" />
+                <category android:name="android.intent.category.LAUNCHER" />
+            </intent-filter>
+        </activity>
+        <service android:name="ScannerService"><intent-filter><action android:name="edu.colorado.systems.tracker.SERVICE"></action>
+</intent-filter>
+</service>
+        <!--  <receiver android:name=".TrackerService.StuffReceiver">
+          <intent-filter>
+            <action android:name="android.provider.Telephony.SMS_RECEIVED" />
+            <action android:name="android.intent.action.DATA_SMS_RECEIVED" />
+           </intent-filter>
+        </receiver> -->
+    <receiver android:name=".receivers.ServiceBootReceiver" android:enabled="true"><intent-filter><action android:name="android.intent.action.BOOT_COMPLETED"></action>
+</intent-filter>
+
+</receiver>
+
+
+
+
+
+
+
+</application>
+    <uses-sdk android:minSdkVersion="3" android:targetSdkVersion="3"/>
+
+<uses-permission android:name="android.permission.ACCESS_FINE_LOCATION"></uses-permission>
+<uses-permission android:name="android.permission.ACCESS_WIFI_STATE"></uses-permission>
+<uses-permission android:name="android.permission.CHANGE_WIFI_STATE"></uses-permission>
+<uses-permission android:name="android.permission.WRITE_SETTINGS"></uses-permission>
+<uses-permission android:name="android.permission.READ_PHONE_STATE"></uses-permission>
+<uses-permission android:name="android.permission.RECEIVE_SMS"></uses-permission>
+<uses-permission android:name="android.permission.WAKE_LOCK"></uses-permission>
+
+<uses-permission android:name="android.permission.READ_SMS"></uses-permission>
+<uses-permission android:name="android.permission.SEND_SMS"></uses-permission>
+<uses-permission android:name="android.permission.RECEIVE_MMS"></uses-permission>
+
+<uses-permission android:name="android.permission.INTERNET"></uses-permission>
+<uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE"></uses-permission>
+
+</manifest> 

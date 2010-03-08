@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:orientation="vertical"
+    android:layout_width="fill_parent"
+    android:layout_height="fill_parent"
+    >
+
+<LinearLayout android:id="@+id/LinearLayout01" android:layout_height="wrap_content" android:layout_width="fill_parent" android:orientation="vertical"><TextView android:layout_width="wrap_content" android:layout_height="wrap_content" android:id="@+id/tv_server_label" android:text="Server URL:"></TextView><EditText android:layout_height="wrap_content" android:layout_width="fill_parent" android:text="Server URL" android:inputType="textWebEditText" android:id="@+id/et_url"></EditText>
+</LinearLayout>
+
+<LinearLayout android:id="@+id/LinearLayout02" android:layout_height="wrap_content" android:orientation="vertical" android:layout_width="fill_parent"><TextView android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="Passphrase:"></TextView><EditText android:layout_height="wrap_content" android:id="@+id/et_pass" android:text="Passphrase" android:layout_width="fill_parent" android:inputType="textPassword"></EditText>
+</LinearLayout><Button android:layout_height="wrap_content" android:layout_width="fill_parent" android:text="Submit" android:id="@+id/b_save_settings"></Button>
+
+
+<TextView android:layout_width="wrap_content" android:layout_height="wrap_content" android:id="@+id/tv_status"></TextView>
+</LinearLayout>
