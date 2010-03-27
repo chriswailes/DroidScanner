@@ -1,7 +1,5 @@
 package com.nuvsoft.android.scanner;
 
-import com.nuvsoft.android.scanner.db.DatabaseAssistant;
-
 import android.app.ActivityManager;
 import android.app.Application;
 import android.app.ActivityManager.RunningServiceInfo;
@@ -12,14 +10,15 @@ import android.content.ServiceConnection;
 import android.os.IBinder;
 import android.os.RemoteException;
 import android.util.Log;
-import edu.colorado.systems.tracker.TrackerServiceInterface;
+
+import com.nuvsoft.android.scanner.db.DatabaseAssistant;
 
 public class ScannerApplication extends Application implements
 		ServiceConnection {
 	private static final String LOG_TAG = ScannerApplication.class
 			.getSimpleName();
 
-	private TrackerServiceInterface iface;
+	private ScannerServiceInterface iface;
 
 	public void onCreate() {
 		super.onCreate();
@@ -60,7 +59,6 @@ public class ScannerApplication extends Application implements
 		} else {
 			Log.v(LOG_TAG, "SERVICE ALREADY STARTED");
 		}
-
 		bindService(new Intent(this, ScannerService.class), this,
 				Context.BIND_AUTO_CREATE);
 		return iface != null;
@@ -78,7 +76,7 @@ public class ScannerApplication extends Application implements
 
 	public void onServiceConnected(ComponentName arg0, IBinder service) {
 		if (iface == null)
-			iface = TrackerServiceInterface.Stub.asInterface(service);
+			iface = ScannerServiceInterface.Stub.asInterface(service);
 	}
 
 	public void onServiceDisconnected(ComponentName arg0) {

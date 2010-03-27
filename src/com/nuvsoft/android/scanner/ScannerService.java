@@ -26,8 +26,6 @@ import com.nuvsoft.android.scanner.settings.EventTrigger;
 import com.nuvsoft.android.scanner.tasks.ScannerTask;
 import com.nuvsoft.android.scanner.tasks.SyncTask;
 
-import edu.colorado.systems.tracker.TrackerServiceInterface;
-
 // Logs:
 // * Location (via network or gps)
 // * Incoming SMS (data or text)
@@ -43,7 +41,7 @@ import edu.colorado.systems.tracker.TrackerServiceInterface;
 public class ScannerService extends Service {
 	private static final String LOG_TAG = ScannerService.class.getSimpleName();
 	public static final int MAIN_POLL_INTERVAL = 10 * 60 * 1000;
-	private PhoneStateLogger phLogger = null;
+	private PhoneStateListener phLogger = null;
 	private TelephonyManager phManager = null;
 	// private TrackerWifiReceiver wifiReceiver = null;
 	// private WifiManager mainWifi = null;
@@ -127,6 +125,7 @@ public class ScannerService extends Service {
 
 	public void onStart(Intent intent, int startId) {
 		super.onStart(intent, startId);
+		this.setForeground(true);
 		Log.v(LOG_TAG, "Timer Started");
 		timer.scheduleAtFixedRate(new TimerTask() {
 			@Override
@@ -169,7 +168,7 @@ public class ScannerService extends Service {
 	}
 
 	public IBinder onBind(Intent intent) {
-		return new TrackerServiceInterface.Stub() {
+		return new ScannerServiceInterface.Stub() {
 			public void onEvent(String e) throws RemoteException {
 				EventTrigger eventTrigger = null;
 				for (EventTrigger et : EventTrigger.values()) {

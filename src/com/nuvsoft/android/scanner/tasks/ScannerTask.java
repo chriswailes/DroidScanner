@@ -43,15 +43,6 @@ public abstract class ScannerTask {
 
 			running = true;
 			if (run(c,eventid)) {
-				new Thread(new Runnable(){
-					public void run(){
-						Looper.prepare();
-						Toast
-								.makeText(c.getApplicationContext(), getLogTag() + " exectued.",
-										Toast.LENGTH_LONG);
-						Looper.loop();	
-					}
-				}).start();
 				updateInterval();
 			}
 			running = false;

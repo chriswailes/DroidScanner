@@ -22,7 +22,8 @@ if(!strcmp($_POST['request'], "test")){
 	}
 }else if(!strcmp($_POST['request'], "read_settings")){
 	if(!strcmp($_POST['pass'], $auth_passphrase)) {
-		echo "LOG_WIFI,CALL_OUTGOING,0\n";
+		echo "1"; // Version Number
+		echo "LOG_WIFI,CALL_OUTGOING,0\n"; // Settings
 		echo "LOG_WIFI,CALL_INCOMING,0\n";
 	}else{
 		echo "BAD AUTHENTICATION";
