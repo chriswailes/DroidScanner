@@ -119,11 +119,11 @@ public class SyncAssistant {
 			_exporter.endDbExport();
 			_exporter.close();
 		} catch (Exception e) {
-			Log.v(LOG_TAG, "Returning Null For Some Reason");
-			Log.v(LOG_TAG, e.getMessage());
+			//Log.v(LOG_TAG, "Returning Null For Some Reason");
+			//Log.v(LOG_TAG, e.getMessage());
 			return null;
 		}
-		Log.v(LOG_TAG, "SUCCESSFUL EXPORT - " + EXPORT_FILE_NAME);
+		//Log.v(LOG_TAG, "SUCCESSFUL EXPORT - " + EXPORT_FILE_NAME);
 		return EXPORT_FILE_NAME;
 	}
 

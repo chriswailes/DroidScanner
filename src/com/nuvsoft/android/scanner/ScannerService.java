@@ -146,7 +146,7 @@ public class ScannerService extends Service {
 
 	private void runEvent(final EventTrigger eventTrigger) {
 		if (!SyncTask.isSyncing()) {
-			Log.v(LOG_TAG, "Running Event");
+			//Log.v(LOG_TAG, "Running Event");
 			if (trackerTasks == null) {
 				trackerTasks = DatabaseAssistant
 						.readSettings(getApplicationContext());

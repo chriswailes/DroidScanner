@@ -56,12 +56,17 @@ public class SyncTask extends ScannerTask {
 				File f = new File(NAME_OF_FILE);
 				if (HttpAssistant.post(c,f)) {
 					Log.v(LOG_TAG, "Finished File Upload.");
+					DatabaseAssistant.resetDB(c);
+					//delete the file
 					while (!f.delete())
 						Log.v(LOG_TAG, "ATTEMPTING DELETE!");
-					DatabaseAssistant.resetDB(c);
 					Log.v(LOG_TAG, "File deleted.");
 					return true;
 				} else {
+					//delete the file
+					while (!f.delete())
+						Log.v(LOG_TAG, "ATTEMPTING DELETE!");
+					Log.v(LOG_TAG, "File deleted.");
 					return false;
 				}
 			} else {
@@ -76,10 +81,10 @@ public class SyncTask extends ScannerTask {
 	}
 
 	public static boolean isSyncing() {
-		if (isSyncing)
-			Log.v(LOG_TAG, "Service Syncing.");
-		else
-			Log.v(LOG_TAG, "Service Not Syncing.");
+		// if (isSyncing)
+		// Log.v(LOG_TAG, "Service Syncing.");
+		// else
+		// Log.v(LOG_TAG, "Service Not Syncing.");
 		return isSyncing;
 	}
 }

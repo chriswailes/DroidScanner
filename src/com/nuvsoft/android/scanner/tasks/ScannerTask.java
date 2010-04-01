@@ -1,9 +1,6 @@
 package com.nuvsoft.android.scanner.tasks;
 
 import android.content.Context;
-import android.os.Looper;
-import android.util.Log;
-import android.widget.Toast;
 
 import com.nuvsoft.android.scanner.db.DatabaseAssistant;
 import com.nuvsoft.android.scanner.settings.EventTrigger;
@@ -30,11 +27,11 @@ public abstract class ScannerTask {
 	public int run(final Context c, EventTrigger t, int eventid) {
 		if (!running) {
 			if (getEventTrigger() != t) {
-				Log.d(getLogTag(), "Wrong Event Trigger");
+				//Log.d(getLogTag(), "Wrong Event Trigger");
 				return eventid;
 			}
 			if (!checkInterval()) {
-				Log.d(getLogTag(), "Waiting for next poll event.");
+				//Log.d(getLogTag(), "Waiting for next poll event.");
 				return eventid;
 			}
 			

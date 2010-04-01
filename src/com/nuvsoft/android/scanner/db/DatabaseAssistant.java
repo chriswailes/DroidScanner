@@ -55,7 +55,7 @@ public class DatabaseAssistant {
 	private static final String db_wifi_data_tbl_name = "tracker_wifi_data";
 	private static final String db_create_wifi_table = "CREATE TABLE "
 			+ db_wifi_data_tbl_name
-			+ " ( eventid int(8), SSID TEXT, BSSID TEXT, capabilities TEXT, frequency int, level, int)";
+			+ " ( eventid int(8), SSID TEXT, BSSID TEXT, capabilities TEXT, frequency int, level int, known_ap TEXT)";
 
 	/**
 	 * TODO: Create Bluetooth information table.
@@ -134,7 +134,7 @@ public class DatabaseAssistant {
 			db.setLocale(Locale.getDefault());
 			db.setLockingEnabled(true);
 			db.setVersion(1);
-			if(!doesTblExist(db_event_tbl_name))
+			if (!doesTblExist(db_event_tbl_name))
 				db.execSQL(db_create_event_table);
 			if (!doesTblExist(db_loc_data_tbl_name))
 				db.execSQL(db_create_loc_table);
@@ -144,7 +144,7 @@ public class DatabaseAssistant {
 				db.execSQL(db_create_wifi_table);
 			if (!doesTblExist(db_battery_tbl_name))
 				db.execSQL(db_create_battery);
-			if(!doesTblExist(db_sms_tbl_name))
+			if (!doesTblExist(db_sms_tbl_name))
 				db.execSQL(db_create_sms_table);
 			if (!doesTblExist(db_sync_tbl_name))
 				db.execSQL(db_create_sync);
@@ -173,7 +173,8 @@ public class DatabaseAssistant {
 		}
 	}
 
-	public static boolean logWifiResult(Context context, int eventid, ScanResult r) {
+	public static boolean logWifiResult(Context context, int eventid,
+			ScanResult r, boolean knownWifi) {
 		getDB(context);
 		ContentValues values = new ContentValues();
 		values.put("SSID", r.SSID);
@@ -182,6 +183,10 @@ public class DatabaseAssistant {
 		values.put("frequency", r.frequency);
 		values.put("level", r.level);
 		values.put("eventid", eventid);
+		if (knownWifi)
+			values.put("known_ap", "t");
+		else
+			values.put("known_ap", "f");
 		return db.insert(db_wifi_data_tbl_name, null, values) != -1;
 	}
 
@@ -277,12 +282,13 @@ public class DatabaseAssistant {
 		}
 		// TODO: Get rid of this hacked in system.
 		// settings.add(new WifiLogTask(EventTrigger.POLLING_EVENT, 30000));
-		settings.add(new BatteryLogTask(EventTrigger.BATTERY_CHANGED, 10000));
-		settings.add(new WifiLogTask(EventTrigger.CALL_INCOMING, 0));
+		settings
+				.add(new BatteryLogTask(EventTrigger.BATTERY_CHANGED, 10 * 1000));
 		settings.add(new WifiLogTask(EventTrigger.CALL_OUTGOING, 0));
 		settings
-				.add(new WifiLogTask(EventTrigger.POLLING_EVENT, 1 * 60 * 1000));
-		settings.add(new SyncTask(EventTrigger.POLLING_EVENT, 15 * 60 * 1000));
+				.add(new WifiLogTask(EventTrigger.POLLING_EVENT, 5 * 60 * 1000));
+		settings.add(new SyncTask(EventTrigger.POLLING_EVENT, 60 * 60 * 1000));
+		settings.add(new WifiLogTask(EventTrigger.SMS_SENT, 0));
 		return settings;
 	}
 

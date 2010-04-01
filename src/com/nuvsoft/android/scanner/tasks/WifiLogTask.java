@@ -7,12 +7,14 @@ import com.nuvsoft.android.scanner.settings.EventTrigger;
 
 import android.content.Context;
 import android.net.wifi.ScanResult;
+import android.net.wifi.WifiConfiguration;
 import android.net.wifi.WifiManager;
 import android.util.Log;
 
 public class WifiLogTask extends ScannerTask {
 	private List<ScanResult> wifiList;
 	private static WifiManager mainWifi = null;
+	private static List<WifiConfiguration> configuredWifi;
 	private static final String LOG_TAG = WifiLogTask.class.getSimpleName();
 	private static volatile boolean polling = false;
 
@@ -21,8 +23,10 @@ public class WifiLogTask extends ScannerTask {
 	}
 
 	private void getMainWifi(Context c) {
-		if (mainWifi == null)
+		if (mainWifi == null) {
 			mainWifi = (WifiManager) c.getSystemService(Context.WIFI_SERVICE);
+			configuredWifi = mainWifi.getConfiguredNetworks();
+		}
 	}
 
 	@Override
@@ -100,7 +104,8 @@ public class WifiLogTask extends ScannerTask {
 				if (wifiList.size() > 0) {
 					for (ScanResult r : wifiList) {
 						Log.d(LOG_TAG, "Logging Wifi Scan Result " + r.SSID);
-						if (DatabaseAssistant.logWifiResult(c, eventid, r)) {
+						if (DatabaseAssistant.logWifiResult(c, eventid, r,
+								knownWifi(r.BSSID))) {
 							Log.d(LOG_TAG, "Wifi Scan Successfully Logged.");
 							success = true;
 						} else {
@@ -138,6 +143,14 @@ public class WifiLogTask extends ScannerTask {
 
 			return success;
 		}
+	}
+
+	private boolean knownWifi(String BSSID) {
+		for (WifiConfiguration w : configuredWifi) {
+			if (w.BSSID.compareTo(BSSID) == 0)
+				return true;
+		}
+		return false;
 	}
 
 	@Override
