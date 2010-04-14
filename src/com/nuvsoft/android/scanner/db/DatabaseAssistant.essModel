@@ -1,0 +1,156 @@
+[Box: ::com.nuvsoft.android.scanner.tasks - ::com.nuvsoft.android.scanner.tasks::BatteryLogTask]
+X=8
+Y=302
+
+[Box: ::com.nuvsoft.android.scanner.tasks - ::com.nuvsoft.android.scanner.tasks::CallStateLogTask]
+X=10
+Y=183
+
+[Box: ::com.nuvsoft.android.scanner.tasks - ::com.nuvsoft.android.scanner.tasks::LocationLogTask]
+X=12
+Y=33
+
+[Box: ::com.nuvsoft.android.scanner.tasks - ::com.nuvsoft.android.scanner.tasks::ScannerTask]
+X=225
+Y=31
+
+[Box: ::com.nuvsoft.android.scanner.tasks - ::com.nuvsoft.android.scanner.tasks::SMSLogTask]
+X=436
+Y=33
+
+[Box: ::com.nuvsoft.android.scanner.tasks - ::com.nuvsoft.android.scanner.tasks::SyncTask]
+X=430
+Y=231
+
+[Box: ::com.nuvsoft.android.scanner.tasks - ::com.nuvsoft.android.scanner.tasks::WifiLogTask]
+X=215
+Y=275
+
+[Diagram: ::com.nuvsoft.android.scanner.tasks]
+OffsetX=0
+OffsetY=0
+Visibility=1
+ShowAssoc=1
+
+[Box: ::com.nuvsoft.android.scanner.receivers - ::<<Unknown>>::BroadcastReceiver]
+X=209
+Y=40
+
+[Box: ::com.nuvsoft.android.scanner.receivers - ::com.nuvsoft.android.scanner.receivers::BatteryReceiver]
+X=20
+Y=121
+
+[Box: ::com.nuvsoft.android.scanner.receivers - ::com.nuvsoft.android.scanner.receivers::ServiceBootReceiver]
+X=224
+Y=158
+
+[Box: ::com.nuvsoft.android.scanner.receivers - ::com.nuvsoft.android.scanner.receivers::WifiReceiver]
+X=426
+Y=172
+
+[Box: ::com.nuvsoft.android.scanner.receivers - ::com.nuvsoft.android.scanner::ScannerApplication]
+X=168
+Y=275
+
+[Diagram: ::com.nuvsoft.android.scanner.receivers]
+OffsetX=0
+OffsetY=0
+Visibility=1
+ShowAssoc=1
+
+[Box: ::com.nuvsoft.android.scanner.listeners - ::<<Unknown>>::PhoneStateListener]
+X=58
+Y=40
+
+[Box: ::com.nuvsoft.android.scanner.listeners - ::com.nuvsoft.android.scanner.listeners::FineLocationListener]
+X=297
+Y=40
+Visible=0
+
+[Box: ::com.nuvsoft.android.scanner.listeners - ::com.nuvsoft.android.scanner.listeners::PhoneStateLogger]
+X=76
+Y=121
+
+[Box: ::com.nuvsoft.android.scanner.listeners - ::com.nuvsoft.android.scanner::ScannerApplication]
+X=20
+Y=291
+
+[Diagram: ::com.nuvsoft.android.scanner.listeners]
+OffsetX=0
+OffsetY=0
+Visibility=1
+ShowAssoc=1
+
+[Box: ::com.nuvsoft.android.scanner.db - ::com.nuvsoft.android.scanner.db::DatabaseAssistant]
+X=243
+Y=35
+
+[Box: ::com.nuvsoft.android.scanner.db - ::com.nuvsoft.android.scanner.db::HttpAssistant]
+X=14
+Y=363
+
+[Box: ::com.nuvsoft.android.scanner.db - ::com.nuvsoft.android.scanner.db::SyncAssistant]
+X=13
+Y=516
+
+[Box: ::com.nuvsoft.android.scanner.db - ::com.nuvsoft.android.scanner.db::SyncAssistant.Exporter]
+X=16
+Y=36
+
+[Box: ::com.nuvsoft.android.scanner.db - ::com.nuvsoft.android.scanner.db::SyncAssistant.Importer]
+X=24
+Y=46
+Visible=0
+
+[Diagram: ::com.nuvsoft.android.scanner.db]
+OffsetX=0
+OffsetY=0
+Visibility=0
+ShowAssoc=1
+
+[Box: ::com.nuvsoft.android.scanner - ::<<Unknown>>::Activity]
+X=20
+Y=231
+
+[Box: ::com.nuvsoft.android.scanner - ::<<Unknown>>::Application]
+X=239
+Y=37
+
+[Box: ::com.nuvsoft.android.scanner - ::<<Unknown>>::Service]
+X=731
+Y=31
+
+[Box: ::com.nuvsoft.android.scanner - ::<<Unknown>>::ServiceConnection]
+X=14
+Y=37
+
+[Box: ::com.nuvsoft.android.scanner - ::com.nuvsoft.android.scanner.observers::SMSObserver]
+X=286
+Y=335
+
+[Box: ::com.nuvsoft.android.scanner - ::com.nuvsoft.android.scanner.receivers::BatteryReceiver]
+X=285
+Y=188
+
+[Box: ::com.nuvsoft.android.scanner - ::com.nuvsoft.android.scanner.receivers::WifiReceiver]
+X=282
+Y=108
+
+[Box: ::com.nuvsoft.android.scanner - ::com.nuvsoft.android.scanner::Scanner]
+X=21
+Y=286
+
+[Box: ::com.nuvsoft.android.scanner - ::com.nuvsoft.android.scanner::ScannerApplication]
+X=21
+Y=100
+
+[Box: ::com.nuvsoft.android.scanner - ::com.nuvsoft.android.scanner::ScannerService]
+X=733
+Y=101
+
+[Diagram: ::com.nuvsoft.android.scanner]
+OffsetX=0
+OffsetY=0
+Visibility=1
+ShowAssoc=1
+

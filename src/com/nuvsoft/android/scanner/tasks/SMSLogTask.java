@@ -25,5 +25,4 @@ public class SMSLogTask extends ScannerTask {
 		ScannerService.getSmsObserver().onEvent(action.name(),eventid);
 		return false;
 	}
-
 }

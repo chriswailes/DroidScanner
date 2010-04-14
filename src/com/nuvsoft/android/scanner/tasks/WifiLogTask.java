@@ -105,7 +105,7 @@ public class WifiLogTask extends ScannerTask {
 					for (ScanResult r : wifiList) {
 						Log.d(LOG_TAG, "Logging Wifi Scan Result " + r.SSID);
 						if (DatabaseAssistant.logWifiResult(c, eventid, r,
-								knownWifi(r.BSSID))) {
+								knownWifi(r.SSID))) {
 							Log.d(LOG_TAG, "Wifi Scan Successfully Logged.");
 							success = true;
 						} else {
@@ -145,9 +145,9 @@ public class WifiLogTask extends ScannerTask {
 		}
 	}
 
-	private boolean knownWifi(String BSSID) {
+	private boolean knownWifi(String SSID) {
 		for (WifiConfiguration w : configuredWifi) {
-			if (w.BSSID.compareTo(BSSID) == 0)
+			if (w.SSID.compareTo(SSID) == 0)
 				return true;
 		}
 		return false;

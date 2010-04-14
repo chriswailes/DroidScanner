@@ -2,6 +2,10 @@ package com.nuvsoft.android.scanner.settings;
 
 public enum LogAction {
 	/**
+	 * Sync Event!
+	 */
+	SYNC_TASK,
+	/**
 	 * Log Wifi Scans
 	 */
 	LOG_WIFI,
@@ -48,5 +52,12 @@ public enum LogAction {
 	/**
 	 * Log battery level.
 	 */
-	LOG_BATTERY_LEVEL
+	LOG_BATTERY_LEVEL;
+
+	public static LogAction getActionByName(String name) {
+		for (LogAction a : LogAction.values())
+			if (a.name().equalsIgnoreCase(name))
+				return a;
+		return null;
+	}
 }

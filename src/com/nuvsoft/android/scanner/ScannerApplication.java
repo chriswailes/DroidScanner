@@ -1,5 +1,7 @@
 package com.nuvsoft.android.scanner;
 
+import java.util.List;
+
 import android.app.ActivityManager;
 import android.app.Application;
 import android.app.ActivityManager.RunningServiceInfo;
@@ -37,14 +39,14 @@ public class ScannerApplication extends Application implements
 			getInterface();
 		}
 	}
-	
-	public void stopApplication(){
+
+	public void stopApplication() {
 		stopService();
 	}
-	
-	private void stopService(){
+
+	private void stopService() {
 		if (isServiceRunning(this)) {
-			this.stopService(new Intent(this,ScannerService.class));
+			this.stopService(new Intent(this, ScannerService.class));
 		} else {
 			Log.v(LOG_TAG, "SERVICE ALREADY STOPPED");
 		}
@@ -86,9 +88,12 @@ public class ScannerApplication extends Application implements
 	private boolean isServiceRunning(Context c) {
 		ActivityManager am = ((ActivityManager) c
 				.getSystemService(Context.ACTIVITY_SERVICE));
-		for (RunningServiceInfo info : am.getRunningServices(Integer.MAX_VALUE)) {
-			Log.v(LOG_TAG, info.process);
-			if (info.process.contains(ScannerService.class.getSimpleName()))
+		List<RunningServiceInfo> processes = am
+				.getRunningServices(Integer.MAX_VALUE);
+		for (RunningServiceInfo info : processes) {
+			String pname = info.service.getShortClassName();
+			Log.v(LOG_TAG, pname);
+			if (pname.contains(ScannerService.class.getSimpleName()))
 				return true;
 		}
 		Log.v(LOG_TAG, "Service Not Running");

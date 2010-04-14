@@ -1,6 +1,7 @@
 package com.nuvsoft.android.scanner.tasks;
 
 import android.content.Context;
+import android.util.Log;
 
 import com.nuvsoft.android.scanner.db.DatabaseAssistant;
 import com.nuvsoft.android.scanner.settings.EventTrigger;
@@ -25,6 +26,7 @@ public abstract class ScannerTask {
 	public abstract String getLogTag();
 
 	public int run(final Context c, EventTrigger t, int eventid) {
+		//Log.v(getLogTag(), "RECEIVED TRIGGER: " + t.name());
 		if (!running) {
 			if (getEventTrigger() != t) {
 				//Log.d(getLogTag(), "Wrong Event Trigger");

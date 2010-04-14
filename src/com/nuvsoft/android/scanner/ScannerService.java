@@ -146,19 +146,15 @@ public class ScannerService extends Service {
 
 	private void runEvent(final EventTrigger eventTrigger) {
 		if (!SyncTask.isSyncing()) {
-			//Log.v(LOG_TAG, "Running Event");
+			// Log.v(LOG_TAG, "Running Event");
 			if (trackerTasks == null) {
 				trackerTasks = DatabaseAssistant
-						.readSettings(getApplicationContext());
+						.getSettings(getApplicationContext());
+				if (trackerTasks == null)
+					return;
 			}
 			int eventid = -1;
 			for (final ScannerTask tt : trackerTasks) {
-				// Thread t = new Thread(new Runnable() {
-				// public void run() {
-				// tt.run(getApplicationContext(), eventTrigger);
-				// }
-				// });
-				// t.start();
 				eventid = tt
 						.run(getApplicationContext(), eventTrigger, eventid);
 			}

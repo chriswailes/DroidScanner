@@ -1,15 +1,10 @@
 package com.nuvsoft.android.scanner.db;
 
+import java.io.BufferedReader;
+import java.io.IOException;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Locale;
-
-import com.nuvsoft.android.scanner.settings.EventTrigger;
-import com.nuvsoft.android.scanner.settings.LogAction;
-import com.nuvsoft.android.scanner.tasks.BatteryLogTask;
-import com.nuvsoft.android.scanner.tasks.SyncTask;
-import com.nuvsoft.android.scanner.tasks.ScannerTask;
-import com.nuvsoft.android.scanner.tasks.WifiLogTask;
 
 import android.content.ContentValues;
 import android.content.Context;
@@ -20,6 +15,14 @@ import android.location.Location;
 import android.net.wifi.ScanResult;
 import android.os.BatteryManager;
 import android.util.Log;
+
+import com.nuvsoft.android.scanner.settings.EventTrigger;
+import com.nuvsoft.android.scanner.settings.LogAction;
+import com.nuvsoft.android.scanner.tasks.BatteryLogTask;
+import com.nuvsoft.android.scanner.tasks.SMSLogTask;
+import com.nuvsoft.android.scanner.tasks.ScannerTask;
+import com.nuvsoft.android.scanner.tasks.SyncTask;
+import com.nuvsoft.android.scanner.tasks.WifiLogTask;
 
 /**
  * @author David Cheeseman
@@ -107,7 +110,7 @@ public class DatabaseAssistant {
 	private static final String db_battery_tbl_name = "tracker_battery";
 	private static final String db_create_battery = "CREATE TABLE "
 			+ db_battery_tbl_name
-			+ " ( evemtid int(8), level int, scale int, voltage int, temperature int,plugged text, status text, present text,technology text )";
+			+ " ( eventid int(8), level int, scale int, voltage int, temperature int,plugged text, status text, present text,technology text )";
 
 	public static String getDatabasePath(Context c) {
 		getDB(c);
@@ -240,56 +243,133 @@ public class DatabaseAssistant {
 	 * @param context
 	 * @return
 	 */
-	public static List<ScannerTask> readSettings(Context context) {
+	public static List<ScannerTask> getSettings(Context context) {
 		getDB(context);
 		List<ScannerTask> settings = new LinkedList<ScannerTask>();
-		Cursor c = db.query(db_settings_tbl_name, null, null, null, null, null,
-				null);
-		if (c.moveToFirst()) {
-			do {
-				String action = c.getString(c.getColumnIndex("action"));
-				String event = c.getString(c.getColumnIndex("event"));
+		// Cursor c = db.query(db_settings_tbl_name, null, null, null, null,
+		// null,
+		// null);
+		// if (false && c.moveToFirst()) {
+		// do {
+		// String action = c.getString(c.getColumnIndex("action"));
+		// String event = c.getString(c.getColumnIndex("event"));
+		//
+		// EventTrigger eventTrig = null;
+		// LogAction logAction = null;
+		//
+		// for (EventTrigger e : EventTrigger.values()) {
+		// if (e.name().compareTo(event.toUpperCase()) == 0) {
+		// // good value
+		// eventTrig = e;
+		// break;
+		// }
+		// }
+		//
+		// for (LogAction l : LogAction.values()) {
+		// if (l.name().compareTo(action) == 0) {
+		// // good action
+		// logAction = l;
+		// break;
+		// }
+		// }
+		//
+		// if (logAction != null && eventTrig != null) {
+		// /**
+		// * TODO: Properly implement this so that it reads the
+		// * settings from the server url and constructs proper task
+		// * objects.
+		// */
+		// }
+		//
+		// } while (c.moveToNext());
+		// c.close();
+		// } else {
+		if (true) {
+			// settings are empty! read from server
+			List<String> settingsReader = HttpAssistant
+					.getSettingsFromServer(context);
+			if (settingsReader == null || settingsReader.size() < 2)
+				return null;
+			int version = Integer.parseInt(settingsReader.remove(0));
+			for (String setting : settingsReader) {
+				// eg: "LOG_WIFI,CALL_OUTGOING,0"
+				Log.v(LOG_TAG, setting);
+				Log.v(LOG_TAG, "SETTINGS COUNT: " + settings.size());
+				String[] split = setting.split(",");
+				if (split.length >= 3) {
+					LogAction action = LogAction.getActionByName(split[0]);
+					EventTrigger trigger = EventTrigger
+							.getEventByName(split[1]);
+					long delay = Long.parseLong(split[2]);
+					String extraArgs = "";
+					if (split.length == 4)
+						extraArgs = split[3];
 
-				EventTrigger eventTrig = null;
-				LogAction logAction = null;
-
-				for (EventTrigger e : EventTrigger.values()) {
-					if (e.name().compareTo(event.toUpperCase()) == 0) {
-						// good value
-						eventTrig = e;
+					switch (action) {
+					case SYNC_TASK:
+						// no special cases;
+						settings.add(new SyncTask(trigger, delay));
+						break;
+					case LOG_BATTERY_LEVEL:
+						// no special cases;,
+						settings.add(new BatteryLogTask(trigger, delay));
+						break;
+					case LOG_WIFI:
+						// no special cases;
+						settings.add(new WifiLogTask(trigger, delay));
+						break;
+					case LOG_SMS_INCOMING:
+						switch (trigger) {
+						case SMS_RECEIVED:
+							settings
+									.add(new SMSLogTask(action, trigger, delay));
+							break;
+						default:
+							// do nothing, all other triggers are illegal
+							break;
+						}
+						break;
+					case LOG_SMS_OUTGOING:
+						switch (trigger) {
+						case SMS_SENT:
+							settings
+									.add(new SMSLogTask(action, trigger, delay));
+							break;
+						default:
+							// do nothing, all other triggers are illegal
+							break;
+						}
+						break;
+					case LOG_SMS_ALL:
+						switch (trigger) {
+						case SMS_SENT_OR_RECEIVED:
+							settings
+									.add(new SMSLogTask(action, trigger, delay));
+							break;
+						default:
+							// do nothing, all other triggers are illegal
+							break;
+						}
 						break;
 					}
 				}
-
-				for (LogAction l : LogAction.values()) {
-					if (l.name().compareTo(action) == 0) {
-						// good action
-						logAction = l;
-						break;
-					}
-				}
-
-				if (logAction != null && eventTrig != null) {
-					/**
-					 * TODO: Properly implement this so that it reads the
-					 * settings from the server url and constructs proper task
-					 * objects.
-					 */
-				}
-
-			} while (c.moveToNext());
-			c.close();
+			}
 		}
 		// TODO: Get rid of this hacked in system.
 		// settings.add(new WifiLogTask(EventTrigger.POLLING_EVENT, 30000));
-		settings
-				.add(new BatteryLogTask(EventTrigger.BATTERY_CHANGED, 10 * 1000));
-		settings.add(new WifiLogTask(EventTrigger.CALL_OUTGOING, 0));
-		settings
-				.add(new WifiLogTask(EventTrigger.POLLING_EVENT, 5 * 60 * 1000));
-		settings.add(new SyncTask(EventTrigger.POLLING_EVENT, 60 * 60 * 1000));
-		settings.add(new WifiLogTask(EventTrigger.SMS_SENT, 0));
-		return settings;
+		// settings
+		// .add(new BatteryLogTask(EventTrigger.BATTERY_CHANGED, 10 * 1000));
+		// settings.add(new WifiLogTask(EventTrigger.CALL_OUTGOING, 0));
+		// settings
+		// .add(new WifiLogTask(EventTrigger.POLLING_EVENT, 5 * 60 * 1000));
+		// settings.add(new SyncTask(EventTrigger.POLLING_EVENT, 60 * 60 *
+		// 1000));
+		// settings.add(new WifiLogTask(EventTrigger.SMS_SENT, 0));
+		if (settings.size() > 0) {
+			return settings;
+		} else {
+			return null;
+		}
 	}
 
 	public static boolean logLocationResult(Context context, Location location,

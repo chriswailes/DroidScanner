@@ -3,6 +3,8 @@ package com.nuvsoft.android.scanner.db;
 import java.io.BufferedReader;
 import java.io.File;
 import java.io.InputStreamReader;
+import java.util.LinkedList;
+import java.util.List;
 
 import org.apache.http.HttpResponse;
 import org.apache.http.client.HttpClient;
@@ -23,6 +25,7 @@ public class HttpAssistant {
 	private static void getServerInfo(Context context) {
 		url = DatabaseAssistant.getSyncURL(context);
 		pass = DatabaseAssistant.getSyncPass(context);
+		Log.v(LOG_TAG, String.format("%s,%s", url, pass));
 	}
 
 	public static boolean testSettings(Context context) {
@@ -114,16 +117,15 @@ public class HttpAssistant {
 		}
 	}
 
-	public static BufferedReader getSettings(Context context) {
+	public static List<String> getSettingsFromServer(Context context) {
 		getServerInfo(context);
+		List<String> ret = new LinkedList<String>();
 		if (url != null && pass != null) {
-			HttpClient httpclient = new DefaultHttpClient();
-			// TODO: Get host url from settings file/db.
-			HttpPost httppost = new HttpPost(url);
-
 			try {
+				HttpClient httpclient = new DefaultHttpClient();
+				HttpPost httppost = new HttpPost(url);
+
 				MultipartEntity entity = new MultipartEntity();
-				// TODO: Get password from settings file/db.
 				entity.addPart("pass", new StringBody(pass));
 				entity.addPart("request", new StringBody("read_settings"));
 				httppost.setEntity(entity);
@@ -131,7 +133,30 @@ public class HttpAssistant {
 
 				BufferedReader reader = new BufferedReader(
 						new InputStreamReader(response.getEntity().getContent()));
-				return reader;
+
+				String line = null;
+				while ((line = reader.readLine()) != null) {
+					Log.v(LOG_TAG, line);
+					ret.add(line);
+				}
+
+				reader.close();
+				return ret;
+
+				// HttpClient httpclient = new DefaultHttpClient();
+				// // TODO: Get host url from settings file/db.
+				// HttpPost httppost = new HttpPost(url);
+				//
+				// MultipartEntity entity = new MultipartEntity();
+				// // TODO: Get password from settings file/db.
+				// entity.addPart("pass", new StringBody(pass));
+				// entity.addPart("request", new StringBody("read_settings"));
+				// httppost.setEntity(entity);
+				// HttpResponse response = httpclient.execute(httppost);
+				//
+				// BufferedReader reader = new BufferedReader(
+				// new InputStreamReader(response.getEntity().getContent()));
+				// return reader;
 			} catch (Exception e) {
 				Log.v(LOG_TAG, e.getMessage());
 				return null;

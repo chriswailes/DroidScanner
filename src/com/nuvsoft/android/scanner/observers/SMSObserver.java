@@ -40,7 +40,7 @@ public class SMSObserver extends ContentObserver {
 	@Override
 	public void onChange(boolean arg0) {
 		super.onChange(arg0);
-		Cursor cur =mContext.getContentResolver().query(SMS_URI, null, null,
+		Cursor cur = mContext.getContentResolver().query(SMS_URI, null, null,
 				null, null);
 		if (cur != null) {
 			cur.moveToNext();
@@ -48,10 +48,14 @@ public class SMSObserver extends ContentObserver {
 			if (protocol == null) {
 				((ScannerApplication) mContext).runEvent(EventTrigger.SMS_SENT
 						.name());
+				((ScannerApplication) mContext)
+						.runEvent(EventTrigger.SMS_SENT_OR_RECEIVED.name());
 				lastContext = SMSContext.SMS_SENT;
 			} else {
 				((ScannerApplication) mContext)
 						.runEvent(EventTrigger.SMS_RECEIVED.name());
+				((ScannerApplication) mContext)
+						.runEvent(EventTrigger.SMS_SENT_OR_RECEIVED.name());
 				lastContext = SMSContext.SMS_RECEIVED;
 			}
 
@@ -86,8 +90,8 @@ public class SMSObserver extends ContentObserver {
 			if (messageSize > 0) {
 				Log.v(SMSObserver.class.getSimpleName(), smsContext.toString()
 						+ " : " + messageSize + " bytes");
-				DatabaseAssistant.logSMSResult(mContext, messageSize, smsContext
-						.name(), eventid);
+				DatabaseAssistant.logSMSResult(mContext, messageSize,
+						smsContext.name(), eventid);
 			}
 		}
 	}
