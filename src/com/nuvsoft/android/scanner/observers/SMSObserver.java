@@ -74,13 +74,13 @@ public class SMSObserver extends ContentObserver {
 		}
 	}
 
-	public void onEvent(String action, int eventid) {
+	public void onEvent(long action, int eventid) {
 		SMSContext smsContext = null;
-		if (action.compareTo(LogAction.LOG_SMS_ALL.name()) == 0) {
+		if (LogAction.LOG_SMS_ALL.isSet(action)) {
 			smsContext = lastContext;
-		} else if (action.compareTo(LogAction.LOG_SMS_INCOMING.name()) == 0) {
+		} else if (LogAction.LOG_SMS_INCOMING.isSet(action)) {
 			smsContext = SMSContext.SMS_RECEIVED;
-		} else if (action.compareTo(LogAction.LOG_SMS_OUTGOING.name()) == 0) {
+		} else if (LogAction.LOG_SMS_OUTGOING.isSet(action)) {
 			smsContext = SMSContext.SMS_SENT;
 		}
 

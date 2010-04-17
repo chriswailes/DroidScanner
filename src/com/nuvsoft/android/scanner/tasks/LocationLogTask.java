@@ -1,14 +1,13 @@
 package com.nuvsoft.android.scanner.tasks;
 
-import com.nuvsoft.android.scanner.db.DatabaseAssistant;
-import com.nuvsoft.android.scanner.settings.EventTrigger;
-
 import android.content.Context;
 import android.location.Location;
 import android.location.LocationListener;
 import android.location.LocationManager;
 import android.os.Bundle;
 import android.util.Log;
+
+import com.nuvsoft.android.scanner.db.DatabaseAssistant;
 
 public class LocationLogTask extends ScannerTask {
 	private static final String LOG_TAG = LocationLogTask.class.getSimpleName();
@@ -28,7 +27,7 @@ public class LocationLogTask extends ScannerTask {
 
 	};
 
-	public LocationLogTask(EventTrigger t, long maxInterval) {
+	public LocationLogTask(long t, long maxInterval) {
 		super(t, maxInterval);
 	}
 

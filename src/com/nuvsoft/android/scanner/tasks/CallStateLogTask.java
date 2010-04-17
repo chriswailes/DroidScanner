@@ -1,12 +1,10 @@
 package com.nuvsoft.android.scanner.tasks;
 
-import com.nuvsoft.android.scanner.settings.EventTrigger;
-
 import android.content.Context;
 
 public class CallStateLogTask extends ScannerTask {
 
-	public CallStateLogTask(EventTrigger t, long maxInterval) {
+	public CallStateLogTask(long t, long maxInterval) {
 		super(t, maxInterval);
 	}
 

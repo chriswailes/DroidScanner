@@ -20,9 +20,15 @@ if(!strcmp($_POST['request'], "test")){
 	}else{
 		echo "BAD AUTHENTICATION";
 	}
-}else if(!strcmp($_POST['request'], "read_settings")){
+}else if (!strcmp($_POST['request'], "settings_version")){
 	if(!strcmp($_POST['pass'], $auth_passphrase)) {
 		echo "1"; // Version Number
+	}else{
+		echo "BAD AUTHENTICATION";
+	}
+}else if(!strcmp($_POST['request'], "read_settings")){
+	if(!strcmp($_POST['pass'], $auth_passphrase)) {	
+		//Order of Values: Log_Action_Bitmask,Event_Trigger_Bitmask,Min_Polling_Interval_ms
 		echo "LOG_WIFI,CALL_OUTGOING,0\n"; // Settings
 		echo "LOG_WIFI,CALL_INCOMING,0\n";
 	}else{

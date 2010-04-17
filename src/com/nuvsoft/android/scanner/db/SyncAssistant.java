@@ -11,7 +11,6 @@ import android.content.Context;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.telephony.TelephonyManager;
-import android.util.Log;
 
 /**
  * @author Michael Maitlen
@@ -21,7 +20,7 @@ import android.util.Log;
  *         xml-file-on-the-sd-card/ and slightly modified.
  */
 public class SyncAssistant {
-	private static final String LOG_TAG = SyncAssistant.class.getSimpleName();
+	//private static final String LOG_TAG = SyncAssistant.class.getSimpleName();
 	private static final String EXPORT_FILE_NAME_BASE = "/sdcard/";
 	private String EXPORT_FILE_NAME;
 
@@ -128,6 +127,10 @@ public class SyncAssistant {
 	}
 
 	private void exportTable(String tableName) throws Exception {
+		if(tableName.equalsIgnoreCase(DatabaseTable.GLOBAL_SETTINGS_TABLE.getTableName())){
+			return;
+		}
+		
 		_exporter.startTable(tableName);
 
 		// get everything from the table

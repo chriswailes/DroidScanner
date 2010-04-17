@@ -2,13 +2,12 @@ package com.nuvsoft.android.scanner.tasks;
 
 import java.io.File;
 
+import android.content.Context;
+import android.util.Log;
+
 import com.nuvsoft.android.scanner.db.DatabaseAssistant;
 import com.nuvsoft.android.scanner.db.HttpAssistant;
 import com.nuvsoft.android.scanner.db.SyncAssistant;
-import com.nuvsoft.android.scanner.settings.EventTrigger;
-
-import android.content.Context;
-import android.util.Log;
 
 public class SyncTask extends ScannerTask {
 
@@ -19,7 +18,7 @@ public class SyncTask extends ScannerTask {
 	private static boolean first = true;
 	private static volatile boolean isSyncing = false;
 
-	public SyncTask(EventTrigger t, long maxInterval) {
+	public SyncTask(long t, long maxInterval) {
 		super(t, maxInterval);
 	}
 

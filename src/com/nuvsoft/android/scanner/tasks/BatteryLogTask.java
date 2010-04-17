@@ -1,16 +1,15 @@
 package com.nuvsoft.android.scanner.tasks;
 
-import com.nuvsoft.android.scanner.db.DatabaseAssistant;
-import com.nuvsoft.android.scanner.receivers.BatteryReceiver;
-import com.nuvsoft.android.scanner.settings.EventTrigger;
-
 import android.content.Context;
 import android.util.Log;
+
+import com.nuvsoft.android.scanner.db.DatabaseAssistant;
+import com.nuvsoft.android.scanner.receivers.BatteryReceiver;
 
 public class BatteryLogTask extends ScannerTask {
 	private static final String LOG_TAG = BatteryLogTask.class.getSimpleName();
 
-	public BatteryLogTask(EventTrigger t, long maxInterval) {
+	public BatteryLogTask(long t, long maxInterval) {
 		super(t, maxInterval);
 	}
 

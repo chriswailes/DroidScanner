@@ -2,14 +2,13 @@ package com.nuvsoft.android.scanner.tasks;
 
 import java.util.List;
 
-import com.nuvsoft.android.scanner.db.DatabaseAssistant;
-import com.nuvsoft.android.scanner.settings.EventTrigger;
-
 import android.content.Context;
 import android.net.wifi.ScanResult;
 import android.net.wifi.WifiConfiguration;
 import android.net.wifi.WifiManager;
 import android.util.Log;
+
+import com.nuvsoft.android.scanner.db.DatabaseAssistant;
 
 public class WifiLogTask extends ScannerTask {
 	private List<ScanResult> wifiList;
@@ -18,7 +17,7 @@ public class WifiLogTask extends ScannerTask {
 	private static final String LOG_TAG = WifiLogTask.class.getSimpleName();
 	private static volatile boolean polling = false;
 
-	public WifiLogTask(EventTrigger t, long maxInterval) {
+	public WifiLogTask(long t, long maxInterval) {
 		super(t, maxInterval);
 	}
 

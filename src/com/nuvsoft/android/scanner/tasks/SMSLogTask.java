@@ -1,16 +1,14 @@
 package com.nuvsoft.android.scanner.tasks;
 
-import com.nuvsoft.android.scanner.ScannerService;
-import com.nuvsoft.android.scanner.settings.EventTrigger;
-import com.nuvsoft.android.scanner.settings.LogAction;
-
 import android.content.Context;
+
+import com.nuvsoft.android.scanner.ScannerService;
 
 public class SMSLogTask extends ScannerTask {
 
-	private LogAction action;
+	private long action;
 
-	public SMSLogTask(LogAction a, EventTrigger t, long maxInterval) {
+	public SMSLogTask(long a, long t, long maxInterval) {
 		super(t, maxInterval);
 		this.action = a;
 	}
@@ -22,7 +20,7 @@ public class SMSLogTask extends ScannerTask {
 
 	@Override
 	public boolean run(Context c, int eventid) {
-		ScannerService.getSmsObserver().onEvent(action.name(),eventid);
+		ScannerService.getSmsObserver().onEvent(action, eventid);
 		return false;
 	}
 }

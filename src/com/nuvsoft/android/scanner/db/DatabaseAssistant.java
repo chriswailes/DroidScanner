@@ -1,7 +1,5 @@
 package com.nuvsoft.android.scanner.db;
 
-import java.io.BufferedReader;
-import java.io.IOException;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Locale;
@@ -18,11 +16,7 @@ import android.util.Log;
 
 import com.nuvsoft.android.scanner.settings.EventTrigger;
 import com.nuvsoft.android.scanner.settings.LogAction;
-import com.nuvsoft.android.scanner.tasks.BatteryLogTask;
-import com.nuvsoft.android.scanner.tasks.SMSLogTask;
 import com.nuvsoft.android.scanner.tasks.ScannerTask;
-import com.nuvsoft.android.scanner.tasks.SyncTask;
-import com.nuvsoft.android.scanner.tasks.WifiLogTask;
 
 /**
  * @author David Cheeseman
@@ -35,82 +29,6 @@ public class DatabaseAssistant {
 	private static final String db_name = "Tracker.db";
 	private static final String LOG_TAG = DatabaseAssistant.class
 			.getSimpleName();
-
-	/**
-	 * Event ordering table.
-	 */
-	private static final String db_event_tbl_name = "tracker_event";
-	private static final String db_create_event_table = "CREATE TABLE "
-			+ db_event_tbl_name
-			+ " ( id INTEGER PRIMARY KEY AUTOINCREMENT, timestamp int(8), event text )";
-
-	/**
-	 * Location information table.
-	 */
-	private static final String db_loc_data_tbl_name = "tracker_loc_data";
-	private static final String db_create_loc_table = "CREATE TABLE "
-			+ db_loc_data_tbl_name
-			+ " ( eventid int(8), lat REAL, long REAL, alt REAL, provider TEXT, accuracy REAL)";
-
-	/**
-	 * Wifi information table.
-	 */
-	private static final String db_wifi_data_tbl_name = "tracker_wifi_data";
-	private static final String db_create_wifi_table = "CREATE TABLE "
-			+ db_wifi_data_tbl_name
-			+ " ( eventid int(8), SSID TEXT, BSSID TEXT, capabilities TEXT, frequency int, level int, known_ap TEXT)";
-
-	/**
-	 * TODO: Create Bluetooth information table.
-	 */
-
-	/**
-	 * TODO: Create accelerometer information table.
-	 */
-
-	/**
-	 * SMS information table.
-	 */
-	private static final String db_sms_tbl_name = "tracker_call_state";
-	private static final String db_create_sms_table = "CREATE TABLE "
-			+ db_sms_tbl_name
-			+ " ( eventid int(8), size int, sms_context text )";
-
-	/**
-	 * TODO: Create Phone State schemas. 3 sections - Call State, Service State,
-	 * and Data State
-	 */
-	private static final String db_call_state_tbl_name = "tracker_call_state";
-	private static final String db_create_call_state_tbl = "CREATE TABLE "
-			+ db_call_state_tbl_name + " ()";
-
-	private static final String db_service_state_tbl_name = "tracker_service_state";
-	private static final String db_create_servicce_state_tbl = "CREATE TABLE "
-			+ db_service_state_tbl_name + " ()";
-
-	private static final String db_data_state_tbl_name = "tracker_data_state";
-	private static final String db_create_data_state_tbl = "CREATE TABLE "
-			+ db_data_state_tbl_name + " ()";
-
-	/**
-	 * Settings information table. Contains the action, event trigger, max
-	 * polling interval, and any special arguments (such as location change
-	 * threshold or accelerometer threshold).
-	 */
-	private static final String db_settings_tbl_name = "tracker_settings";
-	private static final String db_create_settings = "CREATE TABLE "
-			+ db_settings_tbl_name
-			+ " ( id INTEGER PRIMARY KEY AUTOINCREMENT, action TEXT, event TEXT, period_max int, special_args TEXT)";
-
-	private static final String db_sync_tbl_name = "tracker_sync_info";
-	private static final String db_create_sync = "CREATE TABLE "
-			+ db_sync_tbl_name
-			+ " (id INTEGER PRIMARY KEY, url text, passphrase text)";
-
-	private static final String db_battery_tbl_name = "tracker_battery";
-	private static final String db_create_battery = "CREATE TABLE "
-			+ db_battery_tbl_name
-			+ " ( eventid int(8), level int, scale int, voltage int, temperature int,plugged text, status text, present text,technology text )";
 
 	public static String getDatabasePath(Context c) {
 		getDB(c);
@@ -137,42 +55,9 @@ public class DatabaseAssistant {
 			db.setLocale(Locale.getDefault());
 			db.setLockingEnabled(true);
 			db.setVersion(1);
-			if (!doesTblExist(db_event_tbl_name))
-				db.execSQL(db_create_event_table);
-			if (!doesTblExist(db_loc_data_tbl_name))
-				db.execSQL(db_create_loc_table);
-			if (!doesTblExist(db_settings_tbl_name))
-				db.execSQL(db_create_settings);
-			if (!doesTblExist(db_wifi_data_tbl_name))
-				db.execSQL(db_create_wifi_table);
-			if (!doesTblExist(db_battery_tbl_name))
-				db.execSQL(db_create_battery);
-			if (!doesTblExist(db_sms_tbl_name))
-				db.execSQL(db_create_sms_table);
-			if (!doesTblExist(db_sync_tbl_name))
-				db.execSQL(db_create_sync);
-		}
-	}
-
-	/**
-	 * This function runs a select all query on the database table (WHERE 1=0)
-	 * given and returns false if an exception occurs.
-	 * 
-	 * @param tbl_name
-	 * @return True if table exists, false otherwise.
-	 */
-	private static boolean doesTblExist(String tbl_name) {
-		Cursor rs = null;
-		try {
-			rs = db.rawQuery("SELECT * FROM " + tbl_name + " WHERE 1=0", null);
-			Log.v("CONTEXT", "TABLE EXISTS");
-			return true;
-		} catch (Exception ex) {
-			Log.v("CONTEXT", "TABLE DOESN'T EXISTS");
-			return false;
-		} finally {
-			if (rs != null)
-				rs.close();
+			for (DatabaseTable t : DatabaseTable.values()) {
+				t.createTable(db);
+			}
 		}
 	}
 
@@ -190,41 +75,24 @@ public class DatabaseAssistant {
 			values.put("known_ap", "t");
 		else
 			values.put("known_ap", "f");
-		return db.insert(db_wifi_data_tbl_name, null, values) != -1;
+		return db.insert(DatabaseTable.WIFI_DATA_TABLE.name(), null, values) != -1;
 	}
 
 	public static boolean setSyncSettings(Context context, String url,
 			String pass) {
 		getDB(context);
-		ContentValues values = new ContentValues();
-		values.put("id", 1);
-		values.put("url", url);
-		values.put("passphrase", pass);
-		String[] whereargs = { "1" };
-		if (db.update(db_sync_tbl_name, values, "id=?", whereargs) != 1)
-			return db.insert(db_sync_tbl_name, null, values) != -1;
-		else
-			return true;
+		return setGlobalSetting(context, "sync_url", url)
+				&& setGlobalSetting(context, "sync_passphrase", pass);
 	}
 
 	public static String getSyncPass(Context context) {
 		getDB(context);
-		Cursor c = db.query(db_sync_tbl_name, null, "id=?",
-				new String[] { "1" }, null, null, null);
-		if (c.moveToFirst()) {
-			return c.getString(c.getColumnIndex("passphrase"));
-		}
-		return null;
+		return readGlobalSetting(context,"sync_passphrase");
 	}
 
 	public static String getSyncURL(Context context) {
 		getDB(context);
-		Cursor c = db.query(db_sync_tbl_name, null, "id=?",
-				new String[] { "1" }, null, null, null);
-		if (c.moveToFirst()) {
-			return c.getString(c.getColumnIndex("url"));
-		}
-		return null;
+		return readGlobalSetting(context,"sync_url");
 	}
 
 	/**
@@ -290,67 +158,23 @@ public class DatabaseAssistant {
 					.getSettingsFromServer(context);
 			if (settingsReader == null || settingsReader.size() < 2)
 				return null;
-			int version = Integer.parseInt(settingsReader.remove(0));
+			// int version = Integer.parseInt(settingsReader.remove(0));
 			for (String setting : settingsReader) {
 				// eg: "LOG_WIFI,CALL_OUTGOING,0"
 				Log.v(LOG_TAG, setting);
 				Log.v(LOG_TAG, "SETTINGS COUNT: " + settings.size());
 				String[] split = setting.split(",");
 				if (split.length >= 3) {
-					LogAction action = LogAction.getActionByName(split[0]);
-					EventTrigger trigger = EventTrigger
-							.getEventByName(split[1]);
+					long actionMask = Long.parseLong(split[0]);
+					long triggerMask = Long.parseLong(split[1]);
 					long delay = Long.parseLong(split[2]);
-					String extraArgs = "";
-					if (split.length == 4)
-						extraArgs = split[3];
+					String extraArgs = split[3];
 
-					switch (action) {
-					case SYNC_TASK:
-						// no special cases;
-						settings.add(new SyncTask(trigger, delay));
-						break;
-					case LOG_BATTERY_LEVEL:
-						// no special cases;,
-						settings.add(new BatteryLogTask(trigger, delay));
-						break;
-					case LOG_WIFI:
-						// no special cases;
-						settings.add(new WifiLogTask(trigger, delay));
-						break;
-					case LOG_SMS_INCOMING:
-						switch (trigger) {
-						case SMS_RECEIVED:
-							settings
-									.add(new SMSLogTask(action, trigger, delay));
-							break;
-						default:
-							// do nothing, all other triggers are illegal
-							break;
+					for (LogAction a : LogAction.values()) {
+						if (a.isSet(actionMask)) {
+							settings.add(a.generateTask(triggerMask, delay,
+									extraArgs));
 						}
-						break;
-					case LOG_SMS_OUTGOING:
-						switch (trigger) {
-						case SMS_SENT:
-							settings
-									.add(new SMSLogTask(action, trigger, delay));
-							break;
-						default:
-							// do nothing, all other triggers are illegal
-							break;
-						}
-						break;
-					case LOG_SMS_ALL:
-						switch (trigger) {
-						case SMS_SENT_OR_RECEIVED:
-							settings
-									.add(new SMSLogTask(action, trigger, delay));
-							break;
-						default:
-							// do nothing, all other triggers are illegal
-							break;
-						}
-						break;
 					}
 				}
 			}
@@ -382,7 +206,8 @@ public class DatabaseAssistant {
 		values.put("accuracy", location.getAccuracy());
 		values.put("provider", location.getProvider());
 		values.put("eventid", eventid);
-		return db.insert(db_loc_data_tbl_name, null, values) != -1;
+		return db.insert(DatabaseTable.LOCATION_DATA_TABLE.getTableName(),
+				null, values) != -1;
 	}
 
 	public static boolean logSMSResult(Context context, int size,
@@ -392,7 +217,8 @@ public class DatabaseAssistant {
 		values.put("size", size);
 		values.put("sms_context", sms_context);
 		values.put("eventid", eventid);
-		return db.insert(db_sms_tbl_name, null, values) != -1;
+		return db.insert(DatabaseTable.SMS_DATA_TABLE.getTableName(), null,
+				values) != -1;
 	}
 
 	public static boolean logBatteryResult(Context context, Intent batIntent,
@@ -479,7 +305,8 @@ public class DatabaseAssistant {
 		}
 
 		values.put("eventid", eventid);
-		return db.insert(db_battery_tbl_name, null, values) != -1;
+		return db.insert(DatabaseTable.BATTERY_DATA_TABLE.getTableName(),
+				null, values) != -1;
 	}
 
 	public static void purgeDB(Context context) {
@@ -491,14 +318,10 @@ public class DatabaseAssistant {
 	}
 
 	public static void resetDB(Context context) {
-		String url = DatabaseAssistant.getSyncURL(context);
-		String pass = DatabaseAssistant.getSyncPass(context);
-		db.close();
-		db = null;
-		while (context.deleteDatabase(db_name))
-			Log.v(LOG_TAG, "ATTEMPTING TO DELETE DATABASE!");
 		getDB(context);
-		DatabaseAssistant.setSyncSettings(context, url, pass);
+		for (DatabaseTable t : DatabaseTable.values()) {
+			t.resetTable(db);
+		}
 	}
 
 	public static int registerEvent(Context context, EventTrigger et) {
@@ -506,10 +329,12 @@ public class DatabaseAssistant {
 		ContentValues values = new ContentValues();
 		values.put("event", et.name());
 		values.put("timestamp", System.currentTimeMillis());
-		if (db.insert(db_event_tbl_name, null, values) != -1) {
+		if (db.insert(DatabaseTable.TRACKER_EVENT_TABLE.getTableName(), null,
+				values) != -1) {
 			String[] columns = { "id" };
-			Cursor c = db.query(db_event_tbl_name, columns, null, null, null,
-					null, "id DESC");
+			Cursor c = db
+					.query(DatabaseTable.TRACKER_EVENT_TABLE.getTableName(),
+							columns, null, null, null, null, "id DESC");
 			if (c.moveToFirst()) {
 				int ret = c.getInt(c.getColumnIndex("id"));
 				c.close();
@@ -519,6 +344,33 @@ public class DatabaseAssistant {
 			}
 		} else {
 			return -1;
+		}
+	}
+
+	public static String readGlobalSetting(Context context, String tag) {
+		getDB(context);
+		Cursor c = db.query(
+				DatabaseTable.GLOBAL_SETTINGS_TABLE.getTableName(), null,
+				"tag=?", new String[] { tag }, null, null, null);
+		if (c.moveToFirst()) {
+			return c.getString(c.getColumnIndex("url"));
+		}
+		return null;
+	}
+
+	public static boolean setGlobalSetting(Context context, String tag,
+			String value) {
+		getDB(context);
+		ContentValues values = new ContentValues();
+		values.put("value", value);
+		String[] whereargs = { tag };
+		if (db.update(DatabaseTable.GLOBAL_SETTINGS_TABLE.getTableName(),
+				values, "tag=?", whereargs) != 1) {
+			values.put("tag", tag);
+			return db.insert(DatabaseTable.GLOBAL_SETTINGS_TABLE
+					.getTableName(), null, values) != -1;
+		} else {
+			return true;
 		}
 	}
 }
