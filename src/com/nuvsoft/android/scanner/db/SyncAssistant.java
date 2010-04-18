@@ -15,12 +15,13 @@ import android.telephony.TelephonyManager;
 /**
  * @author Michael Maitlen
  * 
- *         Taken from 
+ *         Taken from
  *         http://mgmblog.com/2009/02/06/export-an-android-sqlite-db-to-an-
  *         xml-file-on-the-sd-card/ and slightly modified.
  */
 public class SyncAssistant {
-	//private static final String LOG_TAG = SyncAssistant.class.getSimpleName();
+	// private static final String LOG_TAG =
+	// SyncAssistant.class.getSimpleName();
 	private static final String EXPORT_FILE_NAME_BASE = "/sdcard/";
 	private String EXPORT_FILE_NAME;
 
@@ -118,19 +119,20 @@ public class SyncAssistant {
 			_exporter.endDbExport();
 			_exporter.close();
 		} catch (Exception e) {
-			//Log.v(LOG_TAG, "Returning Null For Some Reason");
-			//Log.v(LOG_TAG, e.getMessage());
+			// Log.v(LOG_TAG, "Returning Null For Some Reason");
+			// Log.v(LOG_TAG, e.getMessage());
 			return null;
 		}
-		//Log.v(LOG_TAG, "SUCCESSFUL EXPORT - " + EXPORT_FILE_NAME);
+		// Log.v(LOG_TAG, "SUCCESSFUL EXPORT - " + EXPORT_FILE_NAME);
 		return EXPORT_FILE_NAME;
 	}
 
 	private void exportTable(String tableName) throws Exception {
-		if(tableName.equalsIgnoreCase(DatabaseTable.GLOBAL_SETTINGS_TABLE.getTableName())){
+		if (tableName.equalsIgnoreCase(DatabaseTable.GLOBAL_SETTINGS_TABLE
+				.name())) {
 			return;
 		}
-		
+
 		_exporter.startTable(tableName);
 
 		// get everything from the table

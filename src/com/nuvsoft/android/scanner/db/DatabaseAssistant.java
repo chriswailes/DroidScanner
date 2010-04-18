@@ -75,7 +75,8 @@ public class DatabaseAssistant {
 			values.put("known_ap", "t");
 		else
 			values.put("known_ap", "f");
-		return db.insert(DatabaseTable.WIFI_DATA_TABLE.name(), null, values) != -1;
+		return db.insert(DatabaseTable.WIFI_DATA_TABLE.name(), null,
+				values) != -1;
 	}
 
 	public static boolean setSyncSettings(Context context, String url,
@@ -86,13 +87,13 @@ public class DatabaseAssistant {
 	}
 
 	public static String getSyncPass(Context context) {
-		getDB(context);
-		return readGlobalSetting(context,"sync_passphrase");
+		// getDB(context);
+		return readGlobalSetting(context, "sync_passphrase");
 	}
 
 	public static String getSyncURL(Context context) {
-		getDB(context);
-		return readGlobalSetting(context,"sync_url");
+		// getDB(context);
+		return readGlobalSetting(context, "sync_url");
 	}
 
 	/**
@@ -162,14 +163,15 @@ public class DatabaseAssistant {
 			for (String setting : settingsReader) {
 				// eg: "LOG_WIFI,CALL_OUTGOING,0"
 				Log.v(LOG_TAG, setting);
-				Log.v(LOG_TAG, "SETTINGS COUNT: " + settings.size());
 				String[] split = setting.split(",");
 				if (split.length >= 3) {
 					long actionMask = Long.parseLong(split[0]);
 					long triggerMask = Long.parseLong(split[1]);
 					long delay = Long.parseLong(split[2]);
-					String extraArgs = split[3];
-
+					String extraArgs = "";
+					if (split.length == 4) {
+						extraArgs = split[3];
+					}
 					for (LogAction a : LogAction.values()) {
 						if (a.isSet(actionMask)) {
 							settings.add(a.generateTask(triggerMask, delay,
@@ -189,6 +191,7 @@ public class DatabaseAssistant {
 		// settings.add(new SyncTask(EventTrigger.POLLING_EVENT, 60 * 60 *
 		// 1000));
 		// settings.add(new WifiLogTask(EventTrigger.SMS_SENT, 0));
+		Log.v(LOG_TAG, "SETTINGS COUNT: " + settings.size());
 		if (settings.size() > 0) {
 			return settings;
 		} else {
@@ -206,7 +209,7 @@ public class DatabaseAssistant {
 		values.put("accuracy", location.getAccuracy());
 		values.put("provider", location.getProvider());
 		values.put("eventid", eventid);
-		return db.insert(DatabaseTable.LOCATION_DATA_TABLE.getTableName(),
+		return db.insert(DatabaseTable.LOCATION_DATA_TABLE.name(),
 				null, values) != -1;
 	}
 
@@ -217,7 +220,7 @@ public class DatabaseAssistant {
 		values.put("size", size);
 		values.put("sms_context", sms_context);
 		values.put("eventid", eventid);
-		return db.insert(DatabaseTable.SMS_DATA_TABLE.getTableName(), null,
+		return db.insert(DatabaseTable.SMS_DATA_TABLE.name(), null,
 				values) != -1;
 	}
 
@@ -305,8 +308,8 @@ public class DatabaseAssistant {
 		}
 
 		values.put("eventid", eventid);
-		return db.insert(DatabaseTable.BATTERY_DATA_TABLE.getTableName(),
-				null, values) != -1;
+		return db.insert(DatabaseTable.BATTERY_DATA_TABLE.name(), null,
+				values) != -1;
 	}
 
 	public static void purgeDB(Context context) {
@@ -329,11 +332,11 @@ public class DatabaseAssistant {
 		ContentValues values = new ContentValues();
 		values.put("event", et.name());
 		values.put("timestamp", System.currentTimeMillis());
-		if (db.insert(DatabaseTable.TRACKER_EVENT_TABLE.getTableName(), null,
+		if (db.insert(DatabaseTable.TRACKER_EVENT_TABLE.name(), null,
 				values) != -1) {
 			String[] columns = { "id" };
 			Cursor c = db
-					.query(DatabaseTable.TRACKER_EVENT_TABLE.getTableName(),
+					.query(DatabaseTable.TRACKER_EVENT_TABLE.name(),
 							columns, null, null, null, null, "id DESC");
 			if (c.moveToFirst()) {
 				int ret = c.getInt(c.getColumnIndex("id"));
@@ -349,11 +352,10 @@ public class DatabaseAssistant {
 
 	public static String readGlobalSetting(Context context, String tag) {
 		getDB(context);
-		Cursor c = db.query(
-				DatabaseTable.GLOBAL_SETTINGS_TABLE.getTableName(), null,
-				"tag=?", new String[] { tag }, null, null, null);
+		Cursor c = db.query(DatabaseTable.GLOBAL_SETTINGS_TABLE.name(),
+				null, "tag=?", new String[] { tag }, null, null, null);
 		if (c.moveToFirst()) {
-			return c.getString(c.getColumnIndex("url"));
+			return c.getString(c.getColumnIndex("value"));
 		}
 		return null;
 	}
@@ -364,11 +366,12 @@ public class DatabaseAssistant {
 		ContentValues values = new ContentValues();
 		values.put("value", value);
 		String[] whereargs = { tag };
-		if (db.update(DatabaseTable.GLOBAL_SETTINGS_TABLE.getTableName(),
+		if (db.update(DatabaseTable.GLOBAL_SETTINGS_TABLE.name(),
 				values, "tag=?", whereargs) != 1) {
 			values.put("tag", tag);
-			return db.insert(DatabaseTable.GLOBAL_SETTINGS_TABLE
-					.getTableName(), null, values) != -1;
+			return db.insert(
+					DatabaseTable.GLOBAL_SETTINGS_TABLE.name(), null,
+					values) != -1;
 		} else {
 			return true;
 		}

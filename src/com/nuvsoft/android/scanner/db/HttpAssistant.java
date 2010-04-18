@@ -65,7 +65,8 @@ public class HttpAssistant {
 				return false;
 			}
 		} catch (Exception e) {
-			Log.v(LOG_TAG, e.getMessage());
+			if (e.getMessage() != null)
+				Log.v(LOG_TAG, e.getMessage());
 			return false;
 		}
 	}
